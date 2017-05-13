@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en" >
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Pony Weather</title>
+</head>
+    
+    <div id="app" style="background: url(<%-backgroundImage%>) no-repeat 0% 0% fixed / cover">
+        <div id="info">
+            <img src="<%=image%>" alt="" id="image">
+            <h1 id="locationText"><%=location%></h1>
+            <h2 id="weatherText"><%=weatherText%></h2>
+            <h2 id="deg"><%=deg%> C</h2>
+            <h2 id="time"><%=time%></h2>
+        </div>
+    </div>
+
+    <style>
+        *{
+            padding: 0em;
+            margin: 0em;
+        }
+
+        #app{
+            position: fixed;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        #image{
+            width: 10em;
+        }
+
+        #info{
+            text-align: center;
+        }
+    </style>
+
+</body>
+</html>

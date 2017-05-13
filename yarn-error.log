@@ -1,0 +1,34 @@
+Arguments: 
+  /usr/local/bin/node /usr/local/bin/yarn add express body-parse
+
+PATH: 
+  /Library/Frameworks/Python.framework/Versions/3.4/bin:/Library/Frameworks/Python.framework/Versions/3.5/bin:/Library/Frameworks/Python.framework/Versions/3.4/bin:/Library/Frameworks/Python.framework/Versions/3.5/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin:/usr/local/go/bin:/Library/Frameworks/Mono.framework/Versions/Current/Commands
+
+Yarn version: 
+  0.21.3
+
+Node version: 
+  7.10.0
+
+Platform: 
+  darwin x64
+
+npm manifest: 
+  {
+    "name": "ponyweather",
+    "version": "1.0.0",
+    "main": "index.js",
+    "author": "@felixfong227 <moongod101@hotmail.com> (https://felixfong227.ml)",
+    "license": "MIT"
+  }
+
+yarn manifest: 
+  No manifest
+
+Lockfile: 
+  No lockfile
+
+Trace: 
+  Error: getaddrinfo ENOTFOUND registry.yarnpkg.com registry.yarnpkg.com:443
+      at errnoException (dns.js:28:10)
+      at GetAddrInfoReqWrap.onlookup [as oncomplete] (dns.js:73:26)
