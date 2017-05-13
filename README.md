@@ -38,3 +38,5 @@ But you can also input manually
 GET | /<LOCATION>
 http://localhost:8080/London
 ```
+
+A [Blog](https://felixfong227.tumblr.com/post/160630440298/week-end-hacking-project-1-pony-weather) about this week end hacks
