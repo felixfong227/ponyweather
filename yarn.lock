@@ -765,6 +765,10 @@ iplocation@^4.1.0:
     ip-regex "^2.1.0"
     request "^2.81.0"
 
+ipware@^1.0.0:
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/ipware/-/ipware-1.0.0.tgz#e3f5320963d0ae872eaf478d63ecb36f04c04c99"
+
 is-fullwidth-code-point@^1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-fullwidth-code-point/-/is-fullwidth-code-point-1.0.0.tgz#ef9e31386f031a7f0d643af82fde50c457ef00cb"
@@ -831,6 +835,10 @@ is-stream@^1.0.0:
 is-typedarray@~1.0.0:
   version "1.0.0"
   resolved "https://registry.yarnpkg.com/is-typedarray/-/is-typedarray-1.0.0.tgz#e479c80858df0c1b11ddda6940f96011fcda4a9a"
+
+is_js@^0.9.0:
+  version "0.9.0"
+  resolved "https://registry.yarnpkg.com/is_js/-/is_js-0.9.0.tgz#0ab94540502ba7afa24c856aa985561669e9c52d"
 
 isarray@^1.0.0, isarray@~1.0.0:
   version "1.0.0"
@@ -1123,6 +1131,12 @@ rechoir@^0.6.2:
   resolved "https://registry.yarnpkg.com/rechoir/-/rechoir-0.6.2.tgz#85204b54dba82d5742e28c96756ef43af50e3384"
   dependencies:
     resolve "^1.1.6"
+
+request-ip@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/request-ip/-/request-ip-2.0.1.tgz#10fbf971ba73e1dd6baf2c325275b6d3d4c10a71"
+  dependencies:
+    is_js "^0.9.0"
 
 request@2.x.x, request@^2.81.0:
   version "2.81.0"
