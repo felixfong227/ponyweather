@@ -6,7 +6,6 @@ const path = require('path');
 const timezonedbtoken = require('./index').timezonedbtoken;
 
 router.get('/:place?', (req, res) => {
-    console.log(1)
     res.setHeader('Content-Type', 'application/json');
     if(typeof req.params.place == 'undefined') {
         res.end(JSON.stringify({
@@ -33,8 +32,8 @@ router.get('/:place?', (req, res) => {
         request.get(`https://maps.google.com/maps/api/geocode/json?address=${place}`, (error, googleMapsResponse, googleMapsBody) => {
             googleMapsBody = JSON.parse(googleMapsBody)
             googleMapsBody = googleMapsBody.results[0];
-            const lat = googleMapsBody;
-            const lng = 114.0041996
+            const lat = googleMapsBody.geometry.location.lat;
+            const lng = googleMapsBody.geometry.location.lng
             weather.find({
                 // => Hong Kong Yuen Long
                 search: place,
@@ -72,7 +71,7 @@ router.get('/:place?', (req, res) => {
                         rain: 'http://25.media.tumblr.com/tumblr_lvfpfnJqFJ1r40km4o1_400.gif',
                         clear: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
                         sunny: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
-                        cloudy: 'https://derpicdn.net/img/2014/12/1/775587/full.gif'
+                        cloudy: 'https://derpicdn.net/img/2014/12/1/775587/full.gif',
                     };
                     for(let key in imageRegistry){
                         if(skytext.includes(key)){
