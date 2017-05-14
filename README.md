@@ -20,6 +20,8 @@ oauthTokens/
 └── timezonedb.json
 ```
 
+Or you can set an environment variable named `TIMEZONEDB` and the vluae will be your `<TOKEN>`
+
 Once everythign is set up, just run `yarn start` or `npm start`
 
 And the serer by default will run on port `8080`
