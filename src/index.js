@@ -44,7 +44,10 @@ module.exports.timezonedbtoken = timezonedbtoken;
 
 app.set('view engine', 'ejs');
 
-app.use('/', require('./webview'));
+app.get('/favicon.ico', (req, res) => {
+    res.end('lol');
+});
 
-// GET
 app.use('/api', require('./api'));
+
+app.use('/', require('./webview'));
