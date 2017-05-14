@@ -38,6 +38,7 @@ if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/timezonedb.json`))){
 }else{
     timezonedbtoken = JSON.parse(fs.readFileSync(path.join(`${__dirname}/../oauthTokens/timezonedb.json`), 'utf-8'))['token'];
 }
+console.log(`Timezonedb token: ${timezonedbtoken}`);
 module.exports.timezonedbtoken = timezonedbtoken;
 
 app.set('view engine', 'ejs');
