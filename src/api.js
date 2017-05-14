@@ -3,6 +3,7 @@ const router = express.Router();
 const request = require('request');
 const fs = require('fs');
 const path = require('path');
+const timezonedbtoken = require('./index').timezonedbtoken;
 
 router.get('/:place?', (req, res) => {
     res.setHeader('Content-Type', 'application/json');
@@ -48,56 +49,52 @@ router.get('/:place?', (req, res) => {
                         let dateStatus;
                         let backgroundImage;
                         const timePlace = payload.observationpoint.split(',')[0].trim();
-                        // Thanks http://else if(d)ckoverflow.com/questions/13244939/javascript-to-output-text-based-on-
-                        fs.readFile(path.join(`${__dirname}/../oauthTokens/timezonedb.json`), 'utf-8', (error, key) => {
-                            key = JSON.parse(key).token;
-                            request.get(`http://api.timezonedb.com/v2/get-time-zone?key=${key}&by=position&lat=${lat}&lng=${lng}&format=json`, (error, response, body) => {
-                                body = JSON.parse(body);
-                                const curHr = new Date(body.formatted).getHours();
-                                if(curHr <= 6 || curHr >= 19) {
-                                    dateStatus = 'night';
-                                }else if(curHr <= 18){
-                                    dateStatus = 'morning';
-                                }else {
-                                    dateStatus = 'afternoon';
-                                }
+                        request.get(`http://api.timezonedb.com/v2/get-time-zone?key=${timezonedbtoken}&by=position&lat=${lat}&lng=${lng}&format=json`, (error, response, body) => {
+                            body = JSON.parse(body);
+                            const curHr = new Date(body.formatted).getHours();
+                            if(curHr <= 6 || curHr >= 19) {
+                                dateStatus = 'night';
+                            }else if(curHr <= 18){
+                                dateStatus = 'morning';
+                            }else {
+                                dateStatus = 'afternoon';
+                            }
 
-                                if(dateStatus == 'morning') {
-                                    backgroundImage = 'http://vignette1.wikia.nocookie.net/mlp/images/5/5f/Twilight_singing_%22for_absolute_certain%22_S03E13.png/revision/latest?cb=20130217092930'
-                                }else if(dateStatus == 'afternoon') {
-                                    backgroundImage = 'http://orig12.deviantart.net/1704/f/2015/103/1/5/while_sunset_in_the_ponyville___2560_x_1440_hd_by_shaakuras-d8pjsyv.png';
-                                }else if(dateStatus == 'night') {
-                                    backgroundImage = 'http://vignette2.wikia.nocookie.net/mlp/images/7/74/Ponyville_at_night_S4E14.png/revision/latest?cb=20140217121653';
+                            if(dateStatus == 'morning') {
+                                backgroundImage = 'http://vignette1.wikia.nocookie.net/mlp/images/5/5f/Twilight_singing_%22for_absolute_certain%22_S03E13.png/revision/latest?cb=20130217092930'
+                            }else if(dateStatus == 'afternoon') {
+                                backgroundImage = 'http://orig12.deviantart.net/1704/f/2015/103/1/5/while_sunset_in_the_ponyville___2560_x_1440_hd_by_shaakuras-d8pjsyv.png';
+                            }else if(dateStatus == 'night') {
+                                backgroundImage = 'http://vignette2.wikia.nocookie.net/mlp/images/7/74/Ponyville_at_night_S4E14.png/revision/latest?cb=20140217121653';
+                            }else{
+                                backgroundImage = null;
+                            }
+
+                            const skytext = payload.skytext.toLowerCase();
+
+                            const imageRegistry = {
+                                rain: 'http://25.media.tumblr.com/tumblr_lvfpfnJqFJ1r40km4o1_400.gif',
+                                clear: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
+                                sunny: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
+                                cloudy: 'https://derpicdn.net/img/2014/12/1/775587/full.gif'
+                            };
+                            for(let key in imageRegistry){
+                                if(skytext.includes(key)){
+                                    imageURL = imageRegistry[key];
+                                    break;
                                 }else{
-                                    backgroundImage = null;
+                                    imageURL = payload.imageUrl;
                                 }
-
-                                const skytext = payload.skytext.toLowerCase();
-
-                                const imageRegistry = {
-                                    rain: 'http://25.media.tumblr.com/tumblr_lvfpfnJqFJ1r40km4o1_400.gif',
-                                    clear: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
-                                    sunny: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
-                                    cloudy: 'https://derpicdn.net/img/2014/12/1/775587/full.gif'
-                                };
-                                for(let key in imageRegistry){
-                                    if(skytext.includes(key)){
-                                        imageURL = imageRegistry[key];
-                                        break;
-                                    }else{
-                                        imageURL = payload.imageUrl;
-                                    }
-                                }
-                                res.end(JSON.stringify({
-                                    image: imageURL,
-                                    weatherText: payload.skytext,
-                                    deg: payload.temperature,
-                                    backgroundImage: backgroundImage,
-                                    dateStatus: dateStatus,
-                                    location: payload.observationpoint,
-                                    time: `${payload.day} ${body.formatted}`,
-                                }))
-                            });
+                            }
+                            res.end(JSON.stringify({
+                                image: imageURL,
+                                weatherText: payload.skytext,
+                                deg: payload.temperature,
+                                backgroundImage: backgroundImage,
+                                dateStatus: dateStatus,
+                                location: payload.observationpoint,
+                                time: `${payload.day} ${body.formatted}`,
+                            }))
                         });
                     });
                 });
