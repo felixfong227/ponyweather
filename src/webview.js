@@ -6,7 +6,14 @@ const path = require('path');
 
 router.get('/:place?', (req, res) => {
     // Fetch the user current location
-    request('http://ipinfo.io', function(error, response, ipinfoio) {
+    const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
+    let ipinfourl;
+    if(clientIP !== '::1' ){
+        ipinfourl = `http://ipinfo.io/${clientIP}`
+    }else{
+        ipinfourl = 'http://ipinfo.io';
+    }
+    request(ipinfourl, function(error, response, ipinfoio) {
         if(error) {
             console.log(error);
         }else{

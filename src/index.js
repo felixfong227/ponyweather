@@ -6,6 +6,7 @@ const fs = require('fs');
 const path = require('path');
 const getIP = require('ipware')().get_ip;
 let timezonedbtoken;
+app.enable('trust proxy');
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
