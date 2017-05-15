@@ -4,23 +4,26 @@ const request = require('request');
 const fs = require('fs');
 const path = require('path');
 const timezonedbtoken = require('./index').timezonedbtoken;
-
+let autoIPLookUp = false;
 router.get('/:place?', (req, res) => {
+    const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
+    let ipinfourl;
     res.setHeader('Content-Type', 'application/json');
-    if(typeof req.params.place == 'undefined') {
-        res.end(JSON.stringify({
-            error: true,
-            msg: 'Please pass in the location to look up',
-        }));
-        return false;
-    }
     // Get the current user ip address
     const iplocation = require('iplocation');
     const publicIp = require('public-ip');
     // Get the user location data
     const weather = require('weather-js');
     let place;
-    request.get('http://ipinfo.io', function(error, response, ipinfoio) {
+    if(clientIP !== '::1' ){
+        ipinfourl = `http://ipinfo.io/${clientIP}`;
+        autoIPLookUp = true;
+    }else{
+        ipinfourl = 'http://ipinfo.io';
+        autoIPLookUp = false;
+    }
+
+    request.get(ipinfourl, function(error, response, ipinfoio) {
         ipinfoio = JSON.parse(ipinfoio);
         if(typeof req.params.place == 'undefined'){
             place = `${ipinfoio.region} ${ipinfoio.city}`;
@@ -33,7 +36,7 @@ router.get('/:place?', (req, res) => {
             googleMapsBody = JSON.parse(googleMapsBody)
             googleMapsBody = googleMapsBody.results[0];
             const lat = googleMapsBody.geometry.location.lat;
-            const lng = googleMapsBody.geometry.location.lng
+            const lng = googleMapsBody.geometry.location.lng;
             weather.find({
                 // => Hong Kong Yuen Long
                 search: place,
@@ -89,7 +92,8 @@ router.get('/:place?', (req, res) => {
                         dateStatus: dateStatus,
                         location: payload.observationpoint,
                         time: `${payload.day} ${body.formatted}`,
-                    }))
+                        autoIPLookUp: autoIPLookUp,
+                    }));
                 });
             });
         });
