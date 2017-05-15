@@ -1,6 +1,6 @@
 const expess = require('express');
 const app = expess();
-const port = 8080 | process.env.PORT;
+const port = process.env.PORT || 8080;
 const request = require('request');
 const fs = require('fs');
 const path = require('path');
