@@ -12,7 +12,7 @@ const imageTypes = {
     },
     weather: {
         rain: 'http://25.media.tumblr.com/tumblr_lvfpfnJqFJ1r40km4o1_400.gif',
-        clear: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
+        clear: 'http://iambrony.steeph.tp-radio.de/mlp/gif/cloudsh.gif',
         sunny: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
         cloudy: 'https://derpicdn.net/img/2014/12/1/775587/full.gif',
     },

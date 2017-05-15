@@ -47,6 +47,17 @@ router.get('/:place?', (req, res) => {
                 let dateStatus;
                 let backgroundImage;
                 const timePlace = payload.observationpoint.split(',')[0].trim();
+                function Celsius2Fahrenheit(degree) {
+                    // Thanks https://www.w3schools.com/js/tryit.asp?filename=tryjs_celsius
+                    let x;
+                    if (degree == "C") {
+                        x = document.getElementById("c").value * 9 / 5 + 32;
+                        document.getElementById("f").value = Math.round(x);
+                    } else {
+                        x = (document.getElementById("f").value -32) * 5 / 9;
+                        document.getElementById("c").value = Math.round(x);
+                    }
+                }
                 request.get(`http://api.timezonedb.com/v2/get-time-zone?key=${timezonedbtoken}&by=position&lat=${lat}&lng=${lng}&format=json`, (error, response, body) => {
                     body = JSON.parse(body);
                     const curDate = new Date(body.formatted);
