@@ -49,7 +49,8 @@ router.get('/:place?', (req, res) => {
                 const timePlace = payload.observationpoint.split(',')[0].trim();
                 request.get(`http://api.timezonedb.com/v2/get-time-zone?key=${timezonedbtoken}&by=position&lat=${lat}&lng=${lng}&format=json`, (error, response, body) => {
                     body = JSON.parse(body);
-                    const curHr = new Date(body.formatted).getHours();
+                    const curDate = new Date(body.formatted);
+                    const curHr = curDate.getHours();
                     if(curHr <= 6 || curHr >= 19) {
                         dateStatus = 'night';
                     }else if(curHr <= 18){
@@ -67,7 +68,18 @@ router.get('/:place?', (req, res) => {
                         backgroundImage: `${rootURL}/image/${dateStatus}?type=background`,
                         dateStatus: dateStatus,
                         location: payload.observationpoint,
-                        time: `${payload.day} ${body.formatted}`,
+                        date: {
+                            day: payload.day,
+                            date: {
+                                date: curDate.getDate(),
+                                month: curDate.getMonth(),
+                                year: curDate.getFullYear(),
+                                hour: curDate.getHours(),
+                                minuts: curDate.getMinutes(),
+                                second: curDate.getSeconds(),
+                            },
+                            formatted: body.formatted,
+                        },
                         autoIPLookUp: autoIPLookUp,
                     }));
                 });
