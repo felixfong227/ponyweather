@@ -15,14 +15,13 @@ router.get('/:place?', (req, res) => {
     // Get the user location data
     const weather = require('weather-js');
     let place;
-    if(clientIP !== '::1' ){
+    if( typeof req.params.place == 'undefined' && clientIP !== '::1'){
         ipinfourl = `http://ipinfo.io/${clientIP}`;
         autoIPLookUp = true;
     }else{
         ipinfourl = 'http://ipinfo.io';
         autoIPLookUp = false;
     }
-
     request.get(ipinfourl, function(error, response, ipinfoio) {
         ipinfoio = JSON.parse(ipinfoio);
         if(typeof req.params.place == 'undefined'){
