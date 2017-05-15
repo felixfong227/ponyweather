@@ -5,6 +5,7 @@ const fs = require('fs');
 const path = require('path');
 
 router.get('/:place?', (req, res) => {
+    const rootURL = req.protocol + '://' + req.get('host');
     // Fetch the user current location
     const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
     let ipinfourl;
@@ -18,7 +19,7 @@ router.get('/:place?', (req, res) => {
             console.log(error);
         }else{
             ipinfoio = JSON.parse(ipinfoio);
-            const url = 'http://localhost:8080/api/';
+            const url = `${rootURL}/api`;
             let place;
             if(typeof req.params.place == 'undefined') {
                 place = `${ipinfoio.region} ${ipinfoio.city}`;
@@ -26,7 +27,7 @@ router.get('/:place?', (req, res) => {
                 place = req.params.place;
             }
             // Fetch teh Pony Weather API
-            request(`${url}${place}`, (error, response, body) => {
+            request(`${url}/${place}`, (error, response, body) => {
                 if(error) {
                     console.log(error)
                 }else{

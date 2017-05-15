@@ -48,6 +48,8 @@ app.get('/favicon.ico', (req, res) => {
     res.end('lol');
 });
 
+app.use('/image', require('./image'));
+
 app.use('/api', require('./api'));
 
 app.use('/', require('./webview'));

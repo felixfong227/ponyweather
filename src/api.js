@@ -6,6 +6,7 @@ const path = require('path');
 const timezonedbtoken = require('./index').timezonedbtoken;
 let autoIPLookUp = false;
 router.get('/:place?', (req, res) => {
+    const rootURL = req.protocol + '://' + req.get('host');
     const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
     let ipinfourl;
     res.setHeader('Content-Type', 'application/json');
@@ -57,37 +58,13 @@ router.get('/:place?', (req, res) => {
                         dateStatus = 'afternoon';
                     }
 
-                    if(dateStatus == 'morning') {
-                        backgroundImage = 'http://vignette1.wikia.nocookie.net/mlp/images/5/5f/Twilight_singing_%22for_absolute_certain%22_S03E13.png/revision/latest?cb=20130217092930'
-                    }else if(dateStatus == 'afternoon') {
-                        backgroundImage = 'http://orig12.deviantart.net/1704/f/2015/103/1/5/while_sunset_in_the_ponyville___2560_x_1440_hd_by_shaakuras-d8pjsyv.png';
-                    }else if(dateStatus == 'night') {
-                        backgroundImage = 'http://vignette2.wikia.nocookie.net/mlp/images/7/74/Ponyville_at_night_S4E14.png/revision/latest?cb=20140217121653';
-                    }else{
-                        backgroundImage = null;
-                    }
-
                     const skytext = payload.skytext.toLowerCase();
-
-                    const imageRegistry = {
-                        rain: 'http://25.media.tumblr.com/tumblr_lvfpfnJqFJ1r40km4o1_400.gif',
-                        clear: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
-                        sunny: 'http://vignette4.wikia.nocookie.net/mlp/images/a/aa/Rainbow_Dash_with_sunglasses_crop_S02E03.png/revision/latest?cb=20121212063802',
-                        cloudy: 'https://derpicdn.net/img/2014/12/1/775587/full.gif',
-                    };
-                    for(let key in imageRegistry){
-                        if(skytext.includes(key)){
-                            imageURL = imageRegistry[key];
-                            break;
-                        }else{
-                            imageURL = payload.imageUrl;
-                        }
-                    }
+                    const weatherText = payload.skytext.replace(/ /igm, '').toLowerCase();
                     res.end(JSON.stringify({
-                        image: imageURL,
+                        image: `${rootURL}/image/${weatherText}?type=weather`,
                         weatherText: payload.skytext,
-                        deg: payload.temperature,
-                        backgroundImage: backgroundImage,
+                        deg: parseInt(payload.temperature),
+                        backgroundImage: `${rootURL}/image/${dateStatus}?type=background`,
                         dateStatus: dateStatus,
                         location: payload.observationpoint,
                         time: `${payload.day} ${body.formatted}`,
