@@ -10,6 +10,7 @@
     "ip": "^1.1.5",
     "iplocation": "^4.1.0",
     "ipware": "^1.0.0",
+    "js2xmlparser": "^3.0.0",
     "public-ip": "^2.3.4",
     "request": "^2.81.0",
     "request-ip": "^2.0.1",

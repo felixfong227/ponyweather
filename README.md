@@ -43,8 +43,22 @@ http://localhost:8080/London
 
 # API
 ```
-GET | /api/<LOCATION>(Require)
+GET | /api/<LOCATION>
 http://localhost:8080/api/London
+```
+
+If you didn't pass in the `LOCATION`, the API will look for your current location via your public IP address
+
+The API return come with different data set
+
+And the current support one will be
+- JSON
+- XML
+
+To fetch XML(or any other data set in the future)
+```
+GET | /api/<LOCATION>
+http://localhost:8080/api/London?type=xml
 ```
 
 A [Blog](https://felixfong227.tumblr.com/post/160630440298/week-end-hacking-project-1-pony-weather) about this week end hacks

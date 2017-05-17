@@ -8,7 +8,12 @@ let autoIPLookUp = false;
 router.get('/:place?', (req, res) => {
     const rootURL = req.protocol + '://' + req.get('host');
     const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
+    const type = req.query.type;
     let ipinfourl;
+    const supportingTypes = [
+        'json',
+        'xml',
+    ];
     res.setHeader('Content-Type', 'application/json');
     // Get the current user ip address
     const iplocation = require('iplocation');
@@ -72,7 +77,7 @@ router.get('/:place?', (req, res) => {
 
                     const skytext = payload.skytext.toLowerCase();
                     const weatherText = payload.skytext.replace(/ /igm, '').toLowerCase();
-                    res.end(JSON.stringify({
+                    const returnData = {
                         image: `${rootURL}/image/${weatherText}?type=weather`,
                         weatherText: payload.skytext,
                         deg: parseInt(payload.temperature),
@@ -92,7 +97,19 @@ router.get('/:place?', (req, res) => {
                             formatted: body.formatted,
                         },
                         autoIPLookUp: autoIPLookUp,
-                    }));
+                    };
+
+                    // Check the response data set
+                    if(typeof type == 'undefined' || type == 'json') {
+                        res.end(JSON.stringify(returnData));
+                    }else if(type == 'xml'){
+                        const js2xmlparser = require("js2xmlparser");
+                        res.set('Content-Type', 'text/xml');
+                        res.end(js2xmlparser.parse("result", returnData));
+                    }
+                    else{
+                        res.end(JSON.stringify(returnData));
+                    }
                 });
             });
         });
