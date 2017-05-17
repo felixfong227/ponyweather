@@ -6,6 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Pony Weather</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="/static/index.css">
 </head>
     
     <div id="app" style="background: url(<%-backgroundImage%>) no-repeat 0% 0% fixed / cover">
@@ -17,42 +18,11 @@
             <h2 id="time"><%=date.day%> <%=date.formatted%></h2>
             <div id="opensource">
                 <a href="https://github.com/felixfong227/ponyweather" target="_blank">
-                    <i class="fa fa-github" aria-hidden="true"></i>This project is Open Source
+                    <i class="fa fa-github icon" aria-hidden="true"></i>This project is Open Source
                 </a>
             </div>
         </div>
     </div>
-
-    <style>
-        *{
-            padding: 0em;
-            margin: 0em;
-        }
-
-        #app{
-            position: fixed;
-            width: 100vw;
-            height: 100vh;
-        }
-
-        #image{
-            width: 10em;
-        }
-
-        #info{
-            text-align: center;
-        }
-
-        #opensource{
-            position: fixed;
-            bottom: 2em;
-            left: 2em;
-            background: #FFF;
-            padding: 0.5em;
-            text-decoration: none;
-        }
-
-    </style>
 
 </body>
 </html>

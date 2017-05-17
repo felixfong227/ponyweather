@@ -1,5 +1,5 @@
-const expess = require('express');
-const app = expess();
+const express = require('express');
+const app = express();
 const port = process.env.PORT || 8080;
 const request = require('request');
 const fs = require('fs');
@@ -47,6 +47,8 @@ app.set('view engine', 'ejs');
 app.get('/favicon.ico', (req, res) => {
     res.end('lol');
 });
+
+app.use('/static', express.static(path.join(`${__dirname}/../static`)));
 
 app.use('/image', require('./image'));
 
