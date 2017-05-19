@@ -36,7 +36,6 @@ router.get('/:place?', (req, res) => {
         ipinfourl = 'http://ipinfo.io';
         autoIPLookUp = false;
     }
-
     rp.get(ipinfourl)
     .then(response => {
         response = JSON.parse(response);
@@ -44,7 +43,7 @@ router.get('/:place?', (req, res) => {
         if(typeof req.params.place !== 'undefined') {
             clientPlace = req.params.place;
         }else{
-            clientPlace = place;
+            clientPlace = `${response.region} ${response.city}`;
         }
         // Fetch the Google Maps API fot the lat and lng
         // Tips, Using the V3 you can fetch data without an API key, thanks Google :P]
