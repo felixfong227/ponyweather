@@ -12,7 +12,7 @@ app.listen(port, () => {
 });
 
 // Check the auth toekn
-if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/timezonedb.json`))){
+if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/token.json`))){
     // No JSON file
     // Try the env variable
     if(!process.env.TIMEZONEDB){
@@ -26,7 +26,7 @@ if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/timezonedb.json`))){
     console.log('Using timezonedb.json');
 }
 
-if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/timezonedb.json`))){
+if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/token.json`))){
     // No JSON file
     // Try the env variable
     if(!process.env.TIMEZONEDB){
@@ -36,8 +36,17 @@ if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/timezonedb.json`))){
     }else{
         timezonedbtoken = process.env.TIMEZONEDB;
     }
+
+    if(!process.env.TIMEZONEDB){
+        console.log('ERROR!!');
+        console.error('Please set up the Openweathermap auth token');
+        process.exit();
+    }else{
+        openweathertoken = process.env.OPENWEATHERMAP
+    }
+
 }else{
-    timezonedbtoken = JSON.parse(fs.readFileSync(path.join(`${__dirname}/../oauthTokens/timezonedb.json`), 'utf-8'))['token'];
+    timezonedbtoken = JSON.parse(fs.readFileSync(path.join(`${__dirname}/../oauthTokens/token.json`), 'utf-8'))['timezonedb'];
 }
 console.log(`Timezonedb token: ${timezonedbtoken}`);
 module.exports.timezonedbtoken = timezonedbtoken;

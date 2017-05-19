@@ -5,6 +5,13 @@ const fs = require('fs');
 const path = require('path');
 const timezonedbtoken = require('./index').timezonedbtoken;
 let autoIPLookUp = false;
+let responseObject = {};
+
+let lat;
+let lng;
+
+let dateStatus;
+const rp = require('request-promise');
 router.get('/:place?', (req, res) => {
     const rootURL = req.protocol + '://' + req.get('host');
     const clientIP = req.headers['x-forwarded-for'] || req.connection.remoteAddress || req.ip;
@@ -21,6 +28,7 @@ router.get('/:place?', (req, res) => {
     // Get the user location data
     const weather = require('weather-js');
     let place;
+    let clientPlace;
     if( typeof req.params.place == 'undefined' && clientIP !== '::1'){
         ipinfourl = `http://ipinfo.io/${clientIP}`;
         autoIPLookUp = true;
@@ -28,91 +36,92 @@ router.get('/:place?', (req, res) => {
         ipinfourl = 'http://ipinfo.io';
         autoIPLookUp = false;
     }
-    request.get(ipinfourl, function(error, response, ipinfoio) {
-        ipinfoio = JSON.parse(ipinfoio);
-        if(typeof req.params.place == 'undefined'){
-            place = `${ipinfoio.region} ${ipinfoio.city}`;
+
+    rp.get(ipinfourl)
+    .then(response => {
+        response = JSON.parse(response);
+        place = response.region;
+        if(typeof req.params.place !== 'undefined') {
+            clientPlace = req.params.place;
         }else{
-            place = req.params.place;
+            clientPlace = place;
         }
         // Fetch the Google Maps API fot the lat and lng
-        // Tips, Using the V3 you can fetch data without an API key, thanks Google :P
-        request.get(`https://maps.google.com/maps/api/geocode/json?address=${place}`, (error, googleMapsResponse, googleMapsBody) => {
-            googleMapsBody = JSON.parse(googleMapsBody)
-            googleMapsBody = googleMapsBody.results[0];
-            const lat = googleMapsBody.geometry.location.lat;
-            const lng = googleMapsBody.geometry.location.lng;
-            weather.find({
-                // => Hong Kong Yuen Long
-                search: place,
-                degreeType: 'C',
-            }, (error, payload) => {
-                payload = payload[0]['current'];
-                let imageURL;
-                let dateStatus;
-                let backgroundImage;
-                const timePlace = payload.observationpoint.split(',')[0].trim();
-                function Celsius2Fahrenheit(degree) {
-                    // Thanks https://www.w3schools.com/js/tryit.asp?filename=tryjs_celsius
-                    let x;
-                    if (degree == "C") {
-                        x = document.getElementById("c").value * 9 / 5 + 32;
-                        document.getElementById("f").value = Math.round(x);
-                    } else {
-                        x = (document.getElementById("f").value -32) * 5 / 9;
-                        document.getElementById("c").value = Math.round(x);
-                    }
-                }
-                request.get(`http://api.timezonedb.com/v2/get-time-zone?key=${timezonedbtoken}&by=position&lat=${lat}&lng=${lng}&format=json`, (error, response, body) => {
-                    body = JSON.parse(body);
-                    const curDate = new Date(body.formatted);
-                    const curHr = curDate.getHours();
-                    if(curHr <= 6 || curHr >= 19) {
-                        dateStatus = 'night';
-                    }else if(curHr <= 18){
-                        dateStatus = 'morning';
-                    }else {
-                        dateStatus = 'afternoon';
-                    }
+        // Tips, Using the V3 you can fetch data without an API key, thanks Google :P]
+        return rp.get(`https://maps.google.com/maps/api/geocode/json?address=${clientPlace}`);
+    })
+    .then(response => {
+        response = JSON.parse(response)
+        response = response.results[0];
+        lat = response.geometry.location.lat;
+        lng = response.geometry.location.lng;
+        responseObject['location'] = response.formatted_address;
+        // Fetch the woeid
+        return rp.get(`https://www.metaweather.com/api/location/search/?query=${place}`)
+        // return rp.get(`http://api.timezonedb.com/v2/get-time-zone?key=${timezonedbtoken}&by=position&lat=${lat}&lng=${lng}&format=json`);
+    })
+    .then(response => {
+        response = JSON.parse(response);
+        // Get the first one
+        const woeid = response[0].woeid;
+        // Fetch the weather data
+        return rp.get(`https://www.metaweather.com/api/location/${woeid}`)
+    })
+    .then(response => {
+        response = JSON.parse(response);
+        const weatherData = response.consolidated_weather[0];
+        responseObject['weather'] = weatherData;
+        // Fetch the date and time
+        return rp.get(`http://api.timezonedb.com/v2/get-time-zone?key=${timezonedbtoken}&by=position&lat=${lat}&lng=${lng}&format=json`);
+    })
+    .then(response => {
+        response = JSON.parse(response);
+        const curDate = new Date(response.formatted);
+        const curHr = curDate.getHours();
+        if(curHr <= 6 || curHr >= 19) {
+            dateStatus = 'night';
+        }else if(curHr <= 18){
+            dateStatus = 'morning';
+        }else {
+            dateStatus = 'afternoon';
+        }
+        responseObject['date'] = {
+            day: dateStatus,
+            date: {
+                date: curDate.getDate(),
+                month: curDate.getMonth(),
+                year: curDate.getFullYear(),
+                hour: curDate.getHours(),
+                minuts: curDate.getMinutes(),
+                second: curDate.getSeconds(),
+            },
+        };
+        responseObject['date']['formatted'] = response.formatted;
+        responseObject['auto_ip_look_up'] = autoIPLookUp;
+        let weatherText = responseObject.weather.weather_state_name.replace(/ /igm, '_').toLowerCase();
+        // Get the image source
+        responseObject['image'] = {
+            weather: `${rootURL}/image/${weatherText}?type=weather`,
+            background: `${rootURL}/image/${dateStatus}?type=background`,
+        };
 
-                    const skytext = payload.skytext.toLowerCase();
-                    const weatherText = payload.skytext.replace(/ /igm, '').toLowerCase();
-                    const returnData = {
-                        image: `${rootURL}/image/${weatherText}?type=weather`,
-                        weatherText: payload.skytext,
-                        deg: parseInt(payload.temperature),
-                        backgroundImage: `${rootURL}/image/${dateStatus}?type=background`,
-                        dateStatus: dateStatus,
-                        location: payload.observationpoint,
-                        date: {
-                            day: payload.day,
-                            date: {
-                                date: curDate.getDate(),
-                                month: curDate.getMonth(),
-                                year: curDate.getFullYear(),
-                                hour: curDate.getHours(),
-                                minuts: curDate.getMinutes(),
-                                second: curDate.getSeconds(),
-                            },
-                            formatted: body.formatted,
-                        },
-                        autoIPLookUp: autoIPLookUp,
-                    };
+        // Response to the HTTP request
 
-                    // Check the response data set
-                    if(typeof type == 'undefined' || type == 'json') {
-                        res.end(JSON.stringify(returnData));
-                    }else if(type == 'xml'){
-                        const js2xmlparser = require("js2xmlparser");
-                        res.set('Content-Type', 'text/xml');
-                        res.end(js2xmlparser.parse("result", returnData));
-                    }
-                    else{
-                        res.end(JSON.stringify(returnData));
-                    }
-                });
-            });
-        });
+        // Check the response data set
+        if(typeof type == 'undefined' || type == 'json') {
+            res.set('Content-Type', 'application/json');
+            res.end(JSON.stringify(responseObject));
+        }else if(type == 'xml'){
+            const js2xmlparser = require("js2xmlparser");
+            res.set('Content-Type', 'text/xml');
+            res.end(js2xmlparser.parse("result", responseObject));
+        }
+        else{
+            res.end(JSON.stringify(responseObject));
+        }
+    })
+    .catch(error => {
+        console.log(error);
     });
 });
 

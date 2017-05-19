@@ -10,14 +10,14 @@ And inside the `timezonedb.json` the object should look something like this
 
 ```json
 {
-    "token": "<API KEY>"
+    "timezonedb": "<API KEY>"
 }
 ```
 
 Your directory should look something like that
 ```
 oauthTokens/
-└── timezonedb.json
+└── token.json
 ```
 
 Or you can set an environment variable named `TIMEZONEDB` and the vluae will be your `<TOKEN>`
