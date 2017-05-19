@@ -4,9 +4,9 @@ You need the `Timezonedb` API key to make the backend work
 
 Once you got the API key, make a folder name `oauthTokens`
 
-And inside `oauthTokens` make a JSON file named `timezonedb.json`
+And inside `oauthTokens` make a JSON file named `token.json`
 
-And inside the `timezonedb.json` the object should look something like this
+And inside the `token.json` the object should look something like this
 
 ```json
 {
@@ -25,6 +25,8 @@ Or you can set an environment variable named `TIMEZONEDB` and the vluae will be 
 Once everythign is set up, just run `yarn start` or `npm start`
 
 And the serer by default will run on port `8080`
+
+Or if you already set your PORT ENV variable, it will use the PORT instead
 
 # Options
 
