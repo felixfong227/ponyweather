@@ -9,13 +9,13 @@
     <link rel="stylesheet" href="/static/index.css">
 </head>
     
-    <div id="app" style="background: url(<%-backgroundImage%>) no-repeat 0% 0% fixed / cover">
+    <div id="app" style="background: url(<%-image.background%>) no-repeat 0% 0% fixed / cover">
         <div id="info">
-            <img src="<%=image%>" alt="" id="image">
+            <img src="<%=image.weather%>" alt="" id="image">
             <h1 id="locationText"><%=location%></h1>
-            <h2 id="weatherText"><%=weatherText%></h2>
-            <h2 id="deg"><%=deg%> C</h2>
-            <h2 id="time"><%=date.day%> <%=date.formatted%></h2>
+            <h2 id="weatherText"><%=weather.weather_state_name%></h2>
+            <h2 id="deg"><%=Math.round(weather.the_temp)%> C</h2>
+            <h2 id="time"><%=date.formatted%></h2>
             <div id="opensource">
                 <a href="https://github.com/felixfong227/ponyweather" target="_blank">
                     <i class="fa fa-github icon" aria-hidden="true"></i>This project is Open Source
