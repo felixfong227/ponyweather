@@ -26,9 +26,10 @@ if(!usingENV) {
     if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/token.json`))) {
         console.log('Please set up some kind of oAuth tokens');
         process.exit();
+    }else{
+        const oAuthJSON = JSON.parse(fs.readFileSync(path.join(`${__dirname}/../oauthTokens/token.json`), 'utf-8'));
     }
 }
-const oAuthJSON = JSON.parse(fs.readFileSync(path.join(`${__dirname}/../oauthTokens/token.json`), 'utf-8'));
 
 // Settings up the github
 if(process.env.GITHUB) {
