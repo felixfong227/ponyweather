@@ -1,8 +1,6 @@
 const express = require('express');
-const router = express.Router();
-const request = require('request').defaults({ encoding: null });
-const fs = require('fs');
-const path = require('path');
+const router = new express.Router;
+const request = require('request').defaults({encoding: null});
 
 const imageTypes = {
     background: {
@@ -31,13 +29,13 @@ router.get('/:status?', (req, res) => {
         return false;
     }
 
-    for(let key in imageTypes){
-        if(type.includes(key)){
+    for(let key in imageTypes) {
+        if(type.includes(key)) {
             findType = true;
             break;
         }
     }
-    if(!findType){
+    if(!findType) {
         res.end(JSON.stringify({
             error: true,
             msg: 'Can not find the correct image type',
@@ -46,19 +44,20 @@ router.get('/:status?', (req, res) => {
     }
 
     let findit = false;
-    for(let key in imageTypes[type]){
-        if( status.includes(key) ){
+    for(let key in imageTypes[type]) {
+        if( status.includes(key) ) {
             findit = true;
             status = key;
             break;
         }
     }
-    if(findit){
+    if(findit) {
         request(imageTypes[type][status], (error, response, body) => {
-            if(error){
+            if(error) {
                 console.log(error);
             }else{
-                res.setHeader('Content-Type', response.headers['content-type'] );
+                const contentType = response.headers['content-type'];
+                res.setHeader('Content-Type', contentType);
                 res.send(body);
             }
         });
