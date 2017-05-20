@@ -1,3 +1,4 @@
+/* eslint max-len: ["error", 200]*/
 const express = require('express');
 const router = new express.Router;
 const request = require('request').defaults({encoding: null});
@@ -62,10 +63,72 @@ router.get('/:status?', (req, res) => {
             }
         });
     }else{
-        res.end(JSON.stringify({
-            error: true,
-            msg: 'Can not find the right date status image',
-        }));
+        if(type == 'weather') {
+            // Missing weather image repot
+
+            // Look for the same missing keyword at the database
+            const fs = require('fs');
+            const path = require('path');
+            const dbPath = path.join(`${__dirname}/../database/missing/weather.json`);
+            let missingReport = false;
+            fs.readFile(dbPath, (error, jsonString) => {
+                if(error) {
+                    console.log(error);
+                }else{
+                    const db = JSON.parse(jsonString);
+                    // If not, add one and report to the GitHub issues page
+
+                    function openIssues() {
+                        // Open a new issues at the GitHub repo
+                        const github = {
+                            url: 'https://api.github.com/repos/felixfong227/ponyweather/issues',
+                            content: {
+                                title: `[Missing image] ${status}`,
+                            },
+                            token: require('./index').githubtoken,
+                        };
+                        request({
+                            url: github.url,
+                            method: 'POST',
+                            json: github.content,
+                            headers: {
+                                'Authorization': `token ${github.token}`,
+                                'User-Agent': 'Ponyweather',
+                            },
+                        }, (error, response, body) => {
+                            if(error) {
+                                console.log(error);
+                            }else{
+                                // Write the latest missing repot to the database
+                                fs.writeFileSync(dbPath, JSON.stringify(db, null, 4));
+                            }
+                        });
+                    }
+
+                    if(db['missing'].length <= 0) {
+                        // Empty db
+                        missingReport = false;
+                    }else{
+                        for(let key in db['missing']) {
+                            const keyword = db['missing'][key];
+                            if(keyword == status) {
+                                missingReport = true;
+                                break;
+                            }
+                        }
+                    }
+                    if(!missingReport) {
+                        db['missing'].push(status);
+                        openIssues();
+                    }
+                    res.end(JSON.stringify({
+                        error: true,
+                        msg: 'Can not find the right date status image',
+                        missingReport: missingReport,
+                    }));
+                }
+            });
+        }
     }
 });
 

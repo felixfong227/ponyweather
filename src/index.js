@@ -6,50 +6,40 @@ const fs = require('fs');
 const path = require('path');
 const getIP = require('ipware')().get_ip;
 let timezonedbtoken;
+let githubtoken;
 app.enable('trust proxy');
 app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
 
 // Check the auth toekn
-if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/token.json`))){
-    // No JSON file
-    // Try the env variable
-    if(!process.env.TIMEZONEDB){
-        console.log('ERROR!!');
-        console.error('Please set up the Timezonedb auth token');
+if(!process.env.TIMEZONEDB && !process.env.GITHUB) {
+    if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/token.json`))) {
+        console.log('Please set up some kind of oAuth tokens');
         process.exit();
-    }else{
-        console.log('Using the env variable');
     }
+}
+const oAuthJSON = JSON.parse(fs.readFileSync(path.join(`${__dirname}/../oauthTokens/token.json`), 'utf-8'));
+
+// Settings up the github
+if(process.env.GITHUB) {
+    githubtoken = process.env.GITHUB;
 }else{
-    console.log('Using timezonedb.json');
+    githubtoken = oAuthJSON.github;
 }
 
-if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/token.json`))){
-    // No JSON file
-    // Try the env variable
-    if(!process.env.TIMEZONEDB){
-        console.log('ERROR!!');
-        console.error('Please set up the Timezonedb auth token');
-        process.exit();
-    }else{
-        timezonedbtoken = process.env.TIMEZONEDB;
-    }
-
-    if(!process.env.TIMEZONEDB){
-        console.log('ERROR!!');
-        console.error('Please set up the Openweathermap auth token');
-        process.exit();
-    }else{
-        openweathertoken = process.env.OPENWEATHERMAP
-    }
-
+// Settings up the timezonedb
+if(process.env.GITHUB) {
+    timezonedbtoken = process.env.TIMEZONEDB;
 }else{
-    timezonedbtoken = JSON.parse(fs.readFileSync(path.join(`${__dirname}/../oauthTokens/token.json`), 'utf-8'))['timezonedb'];
+    timezonedbtoken = oAuthJSON.timezonedb;
 }
+
 console.log(`Timezonedb token: ${timezonedbtoken}`);
 module.exports.timezonedbtoken = timezonedbtoken;
+
+console.log(`GitHub token: ${githubtoken}`);
+module.exports.githubtoken = githubtoken;
 
 app.set('view engine', 'ejs');
 

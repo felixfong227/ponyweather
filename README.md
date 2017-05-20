@@ -10,7 +10,8 @@ And inside the `token.json` the object should look something like this
 
 ```json
 {
-    "timezonedb": "<API KEY>"
+    "timezonedb": "<API KEY>",
+    "github": "<API KEY with the permission of repo>"
 }
 ```
 
