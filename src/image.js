@@ -77,7 +77,10 @@ router.get('/:status?', (req, res) => {
                 }else{
                     const db = JSON.parse(jsonString);
                     // If not, add one and report to the GitHub issues page
-
+                    /**
+                     * Just avoid DRY code
+                     * @param {null} void - lol
+                     */
                     function openIssues() {
                         // Open a new issues at the GitHub repo
                         const github = {
@@ -110,10 +113,12 @@ router.get('/:status?', (req, res) => {
                         missingReport = false;
                     }else{
                         for(let key in db['missing']) {
-                            const keyword = db['missing'][key];
-                            if(keyword == status) {
-                                missingReport = true;
-                                break;
+                            if(Object.prototype.hasOwnProperty.call(key, db['missing'])) {
+                                const keyword = db['missing'][key];
+                                if(keyword == status) {
+                                    missingReport = true;
+                                    break;
+                                }
                             }
                         }
                     }

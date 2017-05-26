@@ -1,13 +1,11 @@
 const express = require('express');
 const app = express();
 const port = process.env.PORT || 8080;
-const request = require('request');
 const fs = require('fs');
 const path = require('path');
-const getIP = require('ipware')().get_ip;
 let timezonedbtoken;
 let githubtoken;
-
+let oAuthJSON = {};
 let usingENV;
 app.enable('trust proxy');
 app.listen(port, () => {
@@ -16,7 +14,7 @@ app.listen(port, () => {
 
 // Check the auth toekn
 
-if(process.env.GITHUB && process.env.TIMEZONEDB){
+if(process.env.GITHUB && process.env.TIMEZONEDB) {
     usingENV = true;
 }else{
     usingENV = false;
@@ -27,7 +25,8 @@ if(!usingENV) {
         console.log('Please set up some kind of oAuth tokens');
         process.exit();
     }else{
-        const oAuthJSON = JSON.parse(fs.readFileSync(path.join(`${__dirname}/../oauthTokens/token.json`), 'utf-8'));
+        const fPath = path.join(`${__dirname}/../oauthTokens/token.json`);
+        oAuthJSON = JSON.parse(fs.readFileSync(fPath, 'utf-8'));
     }
 }
 
