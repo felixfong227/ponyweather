@@ -74,7 +74,6 @@ router.get('/:place?', (req, res) => {
     })
     .then((response) => {
         response = JSON.parse(response);
-        console.log(response)
         const curDate = new Date(response.summary.local);
         const curHr = curDate.getHours();
         if(curHr <= 6 || curHr >= 19) {
@@ -95,7 +94,7 @@ router.get('/:place?', (req, res) => {
                 second: curDate.getSeconds(),
             },
         };
-        responseObject['date']['formatted'] = response.formatted;
+        responseObject['date']['formatted'] = curDate.toString();
         responseObject['auto_ip_look_up'] = autoIPLookUp;
         let weatherText = responseObject.weather.weather_state_name.replace(/ /igm, '_').toLowerCase();
         // Get the image source
