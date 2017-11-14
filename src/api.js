@@ -2,7 +2,8 @@
 /* eslint max-len: ["error", 200]*/
 const express = require('express');
 const router = new express.Router;
-const timezonedbtoken = require('./index').timezonedbtoken;
+const worldtimeiotoken = require('./index').worldtimeiotoekn;
+const googlekey = require('./index').googlekey;
 let autoIPLookUp = false;
 let responseObject = {};
 
@@ -40,9 +41,7 @@ router.get('/:place?', (req, res) => {
         }else{
             clientPlace = `${response.region} ${response.city}`;
         }
-        // Fetch the Google Maps API fot the lat and lng
-        // Tips, Using the V3 you can fetch data without an API key, thanks Google :P]
-        return rp.get(`https://maps.google.com/maps/api/geocode/json?address=${clientPlace}`);
+        return rp.get(`https://maps.google.com/maps/api/geocode/json?address=${clientPlace}&key=${googlekey}`);
     })
     .then((response) => {
         response = JSON.parse(response);
@@ -65,11 +64,18 @@ router.get('/:place?', (req, res) => {
         const weatherData = response.consolidated_weather[0];
         responseObject['weather'] = weatherData;
         // Fetch the date and time
-        return rp.get(`http://api.timezonedb.com/v2/get-time-zone?key=${timezonedbtoken}&by=position&lat=${lat}&lng=${lng}&format=json`);
+        return rp.get({
+            url: `https://worldtimeiofree.p.mashape.com/geo?latitude=${lat}&longitude=${lng}`,
+            headers: {
+                'X-Mashape-Key': 'XX8qZvf4jjmshIjcf6yIwR7TEeV0p1k3QFpjsn9fgzPwUnCWPK',
+                'Accept': 'application/json',
+            },
+        });
     })
     .then((response) => {
         response = JSON.parse(response);
-        const curDate = new Date(response.formatted);
+        console.log(response)
+        const curDate = new Date(response.summary.local);
         const curHr = curDate.getHours();
         if(curHr <= 6 || curHr >= 19) {
             dateStatus = 'night';

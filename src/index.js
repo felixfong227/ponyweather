@@ -14,7 +14,7 @@ app.listen(port, () => {
 
 // Check the auth toekn
 
-if(process.env.GITHUB && process.env.TIMEZONEDB) {
+if(process.env.GITHUB && process.env.WORLDTIMEIO) {
     usingENV = true;
 }else{
     usingENV = false;
@@ -30,25 +30,9 @@ if(!usingENV) {
     }
 }
 
-// Settings up the github
-if(process.env.GITHUB) {
-    githubtoken = process.env.GITHUB;
-}else{
-    githubtoken = oAuthJSON.github;
-}
-
-// Settings up the timezonedb
-if(process.env.GITHUB) {
-    timezonedbtoken = process.env.TIMEZONEDB;
-}else{
-    timezonedbtoken = oAuthJSON.timezonedb;
-}
-
-console.log(`Timezonedb token: ${timezonedbtoken}`);
-module.exports.timezonedbtoken = timezonedbtoken;
-
-console.log(`GitHub token: ${githubtoken}`);
-module.exports.githubtoken = githubtoken;
+module.exports.githubtoken = process.env.GITHUB;
+module.exports.worldtimeiotoekn = process.env.WORLDTIMEIO;
+module.exports.googlekey = process.env.GOOGLE_KEY;
 
 app.set('view engine', 'ejs');
 

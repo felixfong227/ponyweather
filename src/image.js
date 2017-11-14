@@ -76,37 +76,10 @@ router.get('/:status?', (req, res) => {
                     console.log(error);
                 }else{
                     const db = JSON.parse(jsonString);
-                    // If not, add one and report to the GitHub issues page
                     /**
                      * Just avoid DRY code
                      * @param {null} void - lol
                      */
-                    function openIssues() {
-                        // Open a new issues at the GitHub repo
-                        const github = {
-                            url: 'https://api.github.com/repos/felixfong227/ponyweather/issues',
-                            content: {
-                                title: `[Missing image] ${status}`,
-                            },
-                            token: require('./index').githubtoken,
-                        };
-                        request({
-                            url: github.url,
-                            method: 'POST',
-                            json: github.content,
-                            headers: {
-                                'Authorization': `token ${github.token}`,
-                                'User-Agent': 'Ponyweather',
-                            },
-                        }, (error, response, body) => {
-                            if(error) {
-                                console.log(error);
-                            }else{
-                                // Write the latest missing repot to the database
-                                fs.writeFileSync(dbPath, JSON.stringify(db, null, 4));
-                            }
-                        });
-                    }
 
                     if(db['missing'].length <= 0) {
                         // Empty db
@@ -121,10 +94,6 @@ router.get('/:status?', (req, res) => {
                                 }
                             }
                         }
-                    }
-                    if(!missingReport) {
-                        db['missing'].push(status);
-                        openIssues();
                     }
                     res.end(JSON.stringify({
                         error: true,
