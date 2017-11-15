@@ -12,6 +12,14 @@ let lng;
 
 let dateStatus;
 const rp = require('request-promise');
+
+router.get('/embed/:place?', (req, res) => {
+    let place = req.params.place || 'Tokyo';
+    res.render('embed', {
+        place,
+    });
+});
+
 router.get('/:place?', (req, res) => {
     const rootURL = req.protocol + '://' + req.get('host');
     const clientIP = req.headers['x-forwarded-for']
@@ -96,6 +104,7 @@ router.get('/:place?', (req, res) => {
         };
         responseObject['date']['formatted'] = curDate.toString();
         responseObject['auto_ip_look_up'] = autoIPLookUp;
+        responseObject['map'] = `${rootURL}/api/embed/${responseObject.location}`;
         let weatherText = responseObject.weather.weather_state_name.replace(/ /igm, '_').toLowerCase();
         // Get the image source
         responseObject['image'] = {
