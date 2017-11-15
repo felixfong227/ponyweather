@@ -12,24 +12,6 @@ app.listen(port, () => {
     console.log(`Server is listening on port ${port}`);
 });
 
-// Check the auth toekn
-
-if(process.env.GITHUB && process.env.WORLDTIMEIO) {
-    usingENV = true;
-}else{
-    usingENV = false;
-}
-
-if(!usingENV) {
-    if(!fs.existsSync(path.join(`${__dirname}/../oauthTokens/token.json`))) {
-        console.log('Please set up some kind of oAuth tokens');
-        process.exit();
-    }else{
-        const fPath = path.join(`${__dirname}/../oauthTokens/token.json`);
-        oAuthJSON = JSON.parse(fs.readFileSync(fPath, 'utf-8'));
-    }
-}
-
 module.exports.githubtoken = process.env.GITHUB;
 module.exports.worldtimeiotoekn = process.env.WORLDTIMEIO;
 module.exports.googlekey = process.env.GOOGLE_KEY;
